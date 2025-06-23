@@ -1,15 +1,16 @@
 <script setup>
-import { CircleUserRound, Menu, Globe, Search } from "lucide-vue-next";
-import { ref, computed, onMounted, onUnmounted, onBeforeUnmount } from "vue";
+import { ref, computed, onMounted, onBeforeUnmount } from "vue";
+import { Search, Menu, CircleUserRound, Globe } from "lucide-vue-next";
+import DatePicker from "primevue/datepicker";
 import { RouterLink } from "vue-router";
-// import Datepicker from "@vuepic/vue-datepicker";
-// import "@vuepic/vue-datepicker/dist/main.css";
 
 const active = ref("");
 const location = ref("");
 const checkInDate = ref(null);
 const checkOutDate = ref(null);
 const guestCounts = ref({ kattalar: 1, bolalar: 0, oilaviy: 0 });
+const isAtTop = ref(true);
+const searchBoxRef = ref(null);
 
 const isAnyActive = computed(() => active.value !== "");
 
@@ -18,40 +19,44 @@ function activate(tab) {
   isAtTop.value = true;
 }
 
-const isAtTop = ref(true);
-
 function handleScroll() {
   isAtTop.value = window.scrollY === 0;
   active.value = "";
 }
-onMounted(() => {
-  window.addEventListener("scroll", handleScroll);
-});
-onUnmounted(() => {
-  window.removeEventListener("scroll", handleScroll);
-});
-
-const searchBoxRef = ref(null);
 
 function handleClickOutside(event) {
   if (
     searchBoxRef.value &&
     !searchBoxRef.value.contains(event.target) &&
-    active.value !== ''
+    active.value !== ""
   ) {
     active.value = "";
   }
 }
 
+function getMenuClass(tab) {
+  return [
+    "flex flex-col cursor-pointer px-[24px] h-full justify-center rounded-[500px]",
+    active.value === tab ? "bg-amber-500" : "hover:bg-amber-100",
+  ];
+}
+
 onMounted(() => {
+  window.addEventListener("scroll", handleScroll);
   document.addEventListener("mousedown", handleClickOutside);
 });
 
 onBeforeUnmount(() => {
+  window.removeEventListener("scroll", handleScroll);
   document.removeEventListener("mousedown", handleClickOutside);
 });
-
-const activeMenu = ref(true);
+function formatDate(date) {
+  if (!date) return "";
+  const day = String(date.getDate()).padStart(2, "0");
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const year = date.getFullYear();
+  return `${day}.${month}.${year}`;
+}
 </script>
 
 <template>
@@ -114,14 +119,18 @@ const activeMenu = ref(true);
       }"
       ref="searchBoxRef"
     >
-      <div 
+      <div
         class="border border-[#D3D3D3] rounded-[500px] flex items-center relative"
-        :class="{'bg-amber-100' : active !== ''}"
+        :class="{ 'bg-[#EBEBEB]': active !== '' }"
       >
         <div
           @click="activate('location')"
           class="flex flex-col cursor-pointer px-[24px] h-full justify-center rounded-[500px]"
-          :class="[active === 'location' ? 'bg-amber-500 hover:bg-none' : 'hover:bg-amber-100']"
+          :class="[
+            active === 'location'
+              ? 'bg-white shadow-xl hover:bg-none'
+              : 'hover:bg-[#DDDDDD]',
+          ]"
         >
           <label class="text-xs">Sihatgoh</label>
           <input
@@ -133,27 +142,39 @@ const activeMenu = ref(true);
         <div
           @click="activate('checkin')"
           class="flex flex-col cursor-pointer px-[24px] h-full justify-center rounded-[500px]"
-          :class="[active === 'checkin' ? 'bg-amber-500 hover:bg-none' : 'hover:bg-amber-100']"
+          :class="[
+            active === 'checkin'
+              ? 'bg-white shadow-xl hover:bg-none'
+              : 'hover:bg-[#DDDDDD]',
+          ]"
         >
           <label class="text-xs">Kirish</label>
           <div class="text-[#717171] text-sm">
-            {{ checkInDate || "Sanani tanlang" }}
+            {{ formatDate(checkInDate) || "Sanani tanlang" }}
           </div>
         </div>
         <div
           @click="activate('checkout')"
           class="flex flex-col cursor-pointer px-[24px] h-full justify-center rounded-[500px]"
-          :class="[active === 'checkout' ? 'bg-amber-500 hover:bg-none' : 'hover:bg-amber-100']"
+          :class="[
+            active === 'checkout'
+              ? 'bg-white shadow-xl hover:bg-none'
+              : 'hover:bg-[#DDDDDD]',
+          ]"
         >
           <label class="text-xs">Chiqib ketish</label>
           <div class="text-[#717171] text-sm">
-            {{ checkOutDate || "Sanani tanlang" }}
+            {{ formatDate(checkOutDate) || "Sanani tanlang" }}
           </div>
         </div>
         <div
           @click="activate('people')"
           class="flex items-center cursor-pointer pl-[24px] gap-16 h-full justify-center rounded-[500px]"
-          :class="[active === 'people' ? 'bg-amber-500 hover:bg-none' : 'hover:bg-amber-100']"
+          :class="[
+            active === 'people'
+              ? 'bg-white shadow-xl hover:bg-none'
+              : 'hover:bg-[#DDDDDD]',
+          ]"
         >
           <div class="flex flex-col">
             <label class="text-xs">Dam oluvchi soni</label>
@@ -180,17 +201,44 @@ const activeMenu = ref(true);
             <Search class="w-5 h-5" color="white" />
           </div>
         </div>
+        <!-- box -->
         <Transition name="fade" mode="out-in">
           <div
             v-if="isAnyActive"
-            
-            class="absolute top-[120%] h-[300px] bg-white border border-[#D3D3D3] rounded-3xl transition-all duration-500 ease-in-out"
+            class="absolute top-[120%] p-2 bg-white border border-[#D3D3D3] rounded-3xl transition-all duration-500 ease-in-out"
             :class="{
               'left-0 w-[500px]': active === 'location',
               'w-full left-0': active === 'checkin' || active === 'checkout',
               'w-[500px] right-0': active === 'people',
             }"
-          ></div>
+          >
+            <!-- Sihatgoh -->
+            <div v-if="active === 'location'">
+              location
+            </div>
+            <!-- Kirish va chiqish sanalari -->
+            <div v-if="active === 'checkin' || active === 'checkout'" class="flex justify-around items-start">
+              <div>
+                <DatePicker
+                  v-model="checkInDate"
+                  inline
+                  showWeek
+                  :max-date="checkOutDate"
+                />
+              </div>
+              <div>
+                <DatePicker
+                  v-model="checkOutDate"
+                  inline
+                  showWeek
+                  :min-date="checkInDate"
+                />
+              </div>
+            </div>
+            <div v-if="active === 'people'">
+              people
+            </div>
+          </div>
         </Transition>
       </div>
 
@@ -221,5 +269,22 @@ const activeMenu = ref(true);
 .fade-enter-active,
 .fade-leave-active {
   transition: all 0.3s ease;
+}
+:deep(.p-datepicker) {
+  border: none !important;
+  box-shadow: none !important;
+  font-family: 'sfproregular';
+}
+
+:deep(.p-datepicker .p-highlight) {
+  background-color: #0456AA !important;
+  color: white !important;
+}
+:deep(.p-datepicker) {
+  --p-datepicker-date-selected-background: #0456AA;
+  --p-datepicker-date-selected-color: white;
+  --p-datepicker-date-hover-background: #e1f0ff;
+  --p-datepicker-date-hover-color: #0456AA;
+   --p-datepicker-panel-border-color: transparent;
 }
 </style>
