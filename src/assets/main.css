@@ -1,0 +1,19 @@
+@import "tailwindcss";
+body{
+    background-color: white;
+    color: #222222;
+    font-family: 'sfpromedium', sans-serif;
+    line-height: 100%;
+}
+@font-face {
+  font-family: 'sfproregular';
+  src: url('@/assets/fonts/SF-Pro-Display-Regular.otf') format('truetype');
+}
+@font-face {
+  font-family: 'sfpromedium';
+  src: url('@/assets/fonts/SF-Pro-Display-Medium.otf') format('truetype');
+}
+@font-face {
+  font-family: 'sfprosemibold';
+  src: url('@/assets/fonts/SF-Pro-Display-Semibold.otf') format('truetype');
+}
