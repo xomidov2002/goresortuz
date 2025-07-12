@@ -26,31 +26,31 @@ function toggleLiked() {
 }
 </script>
 <template>
-  <router-link :to="`/places/${place.id}`"  >
-    <div class="relative w-[336px] rounded-2xl overflow-hidden bg-white">
-      <!-- Top badge and like icon -->
+  <div class="relative lg:w-[300px] rounded-2xl overflow-hidden bg-white">
+    <!-- Top badge and like icon -->
+
+    <div
+      class="absolute top-0 left-0 w-full p-4 z-10 flex justify-between items-center"
+    >
       <div
-        class="absolute top-0 left-0 w-full p-4 z-10 flex justify-between items-center"
+        class="text-sm px-3 py-1.5 bg-white rounded-full flex gap-1 items-center shadow"
       >
-        <div
-          class="text-sm px-3 py-1.5 bg-white rounded-full flex gap-1 items-center shadow"
-        >
-          <span>{{ place.action }}</span>
-          <img
-            v-if="liked"
-            src="/src/images/liked.png"
-            alt="Liked"
-            class="w-4 h-4"
-          />
-        </div>
+        <span>{{ place.action }}</span>
         <img
-          :src="liked ? '/src/images/liked.png' : '/src/images/like.png'"
-          alt="Toggle like"
-          class="w-5 h-5 cursor-pointer"
-          @click="toggleLiked"
+          v-if="liked"
+          src="/src/images/liked.png"
+          alt="Liked"
+          class="w-4 h-4"
         />
       </div>
-
+      <img
+        :src="liked ? '/src/images/liked.png' : '/src/images/like.png'"
+        alt="Toggle like"
+        class="w-5 h-5 cursor-pointer"
+        @click="toggleLiked"
+      />
+    </div>
+    <router-link :to="`/places/${place.id}`">
       <!-- Image slider -->
       <div class="relative w-full h-[318px]">
         <swiper
@@ -89,6 +89,6 @@ function toggleLiked() {
           <span class="font-[sfproregular]">/ kuniga</span>
         </p>
       </div>
-    </div>
-  </router-link>
+    </router-link>
+  </div>
 </template>

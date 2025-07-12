@@ -117,11 +117,11 @@ function formatDate(date) {
         'scale-0 absolute -top-full': !isAtTop,
         'scale-100 relative': isAtTop,
       }"
-      ref="searchBoxRef"
     >
       <div
         class="border border-[#D3D3D3] rounded-[500px] flex items-center relative"
         :class="{ 'bg-[#EBEBEB]': active !== '' }"
+        ref="searchBoxRef"
       >
         <div
           @click="activate('location')"
@@ -241,15 +241,6 @@ function formatDate(date) {
           </div>
         </Transition>
       </div>
-
-      <!-- Searchbox -->
-      <!-- <div 
-        ref="searchBoxRef"
-        class="absolute top-full h-[300px] bg-white border rounded-3xl transition-all duration-500 ease-in-out"
-        v-if="isAnyActive"
-        :class="{'left-0 w-[500px]' : active === 'location', 'w-full left-0' : active === 'checkin' || active === 'checkout', 'w-[500px] right-0' : active === 'people'}"
-      > -->
-      <!-- </div> -->
     </div>
   </header>
 </template>
